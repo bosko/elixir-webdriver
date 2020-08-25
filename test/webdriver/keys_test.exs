@@ -6,7 +6,7 @@ defmodule WebDriverKeysTest do
   alias WebDriver.Keys
 
   test "a valid key code" do
-    assert "\x{e000}" == Keys.key(:key_null)
+    assert "\ue000" == Keys.key(:key_null)
   end
 
   test "an invalid key code" do
@@ -14,6 +14,6 @@ defmodule WebDriverKeysTest do
   end
 
   test "A string containing key codes" do
-    assert "Test#{Keys.key(:key_enter)}String" == "Test\x{e007}String"
+    assert "Test#{Keys.key(:key_enter)}String" == "Test\ue007String"
   end
 end

@@ -45,7 +45,7 @@ defmodule WebDriver.Remote.Port do
   end
 
   def handle_info {:start_session_supervisor, sup}, state do
-    config = %WebDriver.Session.State{root_url: state.root_url, browser: self}
+    config = %WebDriver.Session.State{root_url: state.root_url, browser: self()}
     spec = Supervisor.Spec.worker(WebDriver.SessionSup,[config],[restart: :temporary])
     {:ok, pid} = :supervisor.start_child sup, spec
     {:noreply, %{state | session_supervisor: pid}}

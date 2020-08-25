@@ -90,7 +90,7 @@ defmodule WebDriver do
     Stops all browsers and sessions that are running.
   """
   def stop_all_browsers do
-    Enum.each browsers, fn(browser) -> stop_browser(browser) end
+    Enum.each browsers(), fn(browser) -> stop_browser(browser) end
   end
 
   @doc """
@@ -125,7 +125,7 @@ defmodule WebDriver do
     Returns a list of all the process names of all sessions that are running.
   """
   def sessions do
-    :lists.flatten(Enum.map browsers, fn(browser) -> sessions(browser) end)
+    :lists.flatten(Enum.map browsers(), fn(browser) -> sessions(browser) end)
   end
 
   @doc """

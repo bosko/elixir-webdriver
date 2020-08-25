@@ -39,7 +39,7 @@ defmodule WebDriver.Firefox.Port do
 
   # Because we are using a shim the Firefox program name becomes the argument.
   defp arguments _state do
-    [ case platform do
+    [ case platform() do
         :osx ->     :os.find_executable('firefox-bin') or @osx_path
         # Windows is not actually supported yet, the startup shim wont work.
         :windows -> :os.find_executable('firefox') or @win_path

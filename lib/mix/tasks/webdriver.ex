@@ -6,9 +6,9 @@ defmodule Mix.Tasks.Webdriver do
 
     def run(_) do
       Mix.shell.info "Downloading the Firefox Webdriver plugin."
-      File.mkdir_p Path.dirname(plugin_path)
+      File.mkdir_p Path.dirname(plugin_path())
       {data, _} = System.cmd "curl",[@download_url]
-      :ok = File.write plugin_path, data
+      :ok = File.write plugin_path(), data
       Mix.shell.info "Done."
       :ok
     end

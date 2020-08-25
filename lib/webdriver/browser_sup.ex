@@ -26,7 +26,7 @@ defmodule WebDriver.BrowserSup do
 
   def init config do
     child_processes = [ worker(Keyword.get(@browsers, config.browser),
-                        [config, self])]
+                        [config, self()])]
     supervise child_processes, strategy: :rest_for_one
   end
 end

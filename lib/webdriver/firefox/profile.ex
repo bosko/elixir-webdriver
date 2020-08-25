@@ -76,7 +76,7 @@ defmodule WebDriver.Firefox.Profile do
 
   def to_user_js profile do
     Enum.map(profile, fn({k,v}) -> "user_pref(\"#{k}\", #{quote_string(v)});" end)
-    |> Enum.join "\n"
+    |> Enum.join("\n")
   end
 
   def set_port(profile, port) when is_number(port) and port > 0 do
@@ -113,18 +113,18 @@ defmodule WebDriver.Firefox.Profile do
     end
     destination = Path.join [destination,"extensions","fxdriver@googlecode.com"]
     File.mkdir_p destination
-    { :ok, _ } = :zip.unzip String.to_char_list(source), [{:cwd, String.to_char_list(destination)}]
+    { :ok, _ } = :zip.unzip String.to_charlist(source), [{:cwd, String.to_charlist(destination)}]
   end
 
   def make_temp_directory do
-    dir = Path.join(System.tmp_dir, "webdriver-firefox-profile#{random_extension}")
+    dir = Path.join(System.tmp_dir, "webdriver-firefox-profile#{random_extension()}")
     :ok = File.mkdir_p dir
     dir
   end
 
   # Generate a filename safe random string.
   defp random_extension do
-    Regex.replace(~r/[=\/+]/, :base64.encode(:crypto.rand_bytes(8)), "")
+    Regex.replace(~r/[=\/+]/, :base64.encode(:crypto.strong_rand_bytes(8)), "")
     |> String.downcase
   end
 
