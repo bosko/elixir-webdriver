@@ -37,7 +37,7 @@ defmodule WebDriver.Chrome.Port do
   end
 
   def arguments state do
-    port_arg = String.to_char_list("--port=#{state.http_port}")
+    port_arg = String.to_charlist("--port=#{state.http_port}")
     [port_arg,'--url-base=wd/hub']
   end
 

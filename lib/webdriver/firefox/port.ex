@@ -85,7 +85,7 @@ defmodule WebDriver.Firefox.Port do
       {_port, {:data, info}} ->
       case List.to_string(info) do
         <<"kill -9 ", pid::binary>> ->
-          { :ok, %{ state | kill_command: String.to_char_list("kill -9 #{pid}")}}
+          { :ok, %{ state | kill_command: String.to_charlist("kill -9 #{pid}")}}
         info ->
           :error_logger.info_msg "#{__MODULE__}: #{info}"
           { :ok, state }

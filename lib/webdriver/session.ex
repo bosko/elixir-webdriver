@@ -381,9 +381,9 @@ defmodule WebDriver.Session do
   end
 
   defp do_window_size response do
-    resp = Enum.into response, HashDict.new()
-    {:ok, h} = HashDict.fetch(resp,"height")
-    {:ok, w} = HashDict.fetch(resp,"width")
+    resp = Enum.into response, Map.new()
+    {:ok, h} = Map.fetch(resp,"height")
+    {:ok, w} = Map.fetch(resp,"width")
     [height: h,  width: w]
   end
 
