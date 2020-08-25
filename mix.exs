@@ -7,8 +7,8 @@ defmodule WebDriver.Mixfile do
       description: "Webdriver protocol for driving web browsers.",
       source_url: "https://github.com/stuart/elixir-webdriver",
       homepage_url: "http://stuart.github.io/elixir-webdriver",
-      package: package,
-      deps: deps,
+      package: package(),
+      deps: deps(),
       docs: [
         readme: true,
         main: "README"
@@ -21,7 +21,7 @@ defmodule WebDriver.Mixfile do
     [
       mod: { WebDriver, []},
       registered:   [ :webdriver ],
-      applications: [ :httpotion, :jazz ],
+      applications: [ :httpoison ],
       env: [ debug_browser: false ]
     ]
   end
@@ -30,18 +30,18 @@ defmodule WebDriver.Mixfile do
   # { :foobar, "0.1", git: "https://github.com/elixir-lang/foobar.git" }
   defp deps do
     [
-      {:ibrowse,   github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
-      {:httpotion, "~> 2.1"},
-      {:jazz,      "~> 0.2.1"},
+      # {:ibrowse,   github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
+      {:httpoison, "~> 1.6"},
+      {:jason,      "~> 1.2"},
       {:mock,      github: "jjh42/mock", only: :test},
-      {:earmark,   "~>0.1.10", only: :dev},
-      {:ex_doc,    "~>0.6", only: :dev}
+      # {:earmark,   "~>0.1.10", only: :dev},
+      {:ex_doc,    "~>0.22", only: :dev}
      ]
   end
 
   defp package do
     [
-      contributors: ["Stuart Coyle", "Carl Woodward"],
+      contributors: ["Stuart Coyle", "Carl Woodward", "Boško Ivannišević"],
       licenses: ["MIT License"],
       links: %{"GitHub" => "https://github.com/stuart/elixir-webdriver",
                "Docs" => "http://stuart.github.io/elixir-webdriver/"}

@@ -2,7 +2,6 @@ Code.require_file "../test_helper.exs", __DIR__
 
 defmodule WebDriverProtocolTest do
   use ExUnit.Case, async: true
-  use Jazz
   import Mock
 
   alias WebDriver.Protocol
@@ -415,21 +414,21 @@ defmodule WebDriverProtocolTest do
   #  Mocks a response to a request.
   #  The response just echoes the request body.
   def test_get command, path do
-    with_mock HTTPotion, [], [get: fn(url, options) -> get(url, options) end] do
+    with_mock HTTPoison, [], [get: fn(url, options) -> get(url, options) end] do
       {:ok, _response} = command.("http://127.0.0.1:8080")
       assert_get path
     end
   end
 
   def test_post command, path, options do
-    with_mock HTTPotion, [], [post: fn(url, options) -> post(url, options) end] do
+    with_mock HTTPoison, [], [post: fn(url, options) -> post(url, options) end] do
       {:ok, _response} = command.("http://127.0.0.1:8080")
       assert_post path, options
     end
   end
 
   def test_delete command, path do
-    with_mock HTTPotion, [], [delete: fn(url, options) -> delete(url, options) end] do
+    with_mock HTTPoison, [], [delete: fn(url, options) -> delete(url, options) end] do
       {:ok, _response} = command.("http://127.0.0.1:8080")
       assert_delete path
     end
@@ -437,33 +436,34 @@ defmodule WebDriverProtocolTest do
 
   def post(_url, options) do
     body = Keyword.get(options, :body)
-    %HTTPotion.Response{ body: "{\"sessionId\": \"1234\", \"status\": 0, \"value\": #{JSON.encode! body}}",
+    %HTTPoison.Response{ body: "{\"sessionId\": \"1234\", \"status\": 0, \"value\": #{JASON.encode! body}}",
                        status_code: 201, headers: []}
   end
 
-  # Mocks a response to a GET request. Just returns an HTTPotion Response
+  # Mocks a response to a GET request. Just returns an HTTPoison Response
   def get(_url, _options) do
-    %HTTPotion.Response{ body: "{\"sessionId\": \"1234\", \"status\": 0, \"value\": #{JSON.encode!(%{})}}",
+    %HTTPoison.Response{ body: "{\"sessionId\": \"1234\", \"status\": 0, \"value\": #{JASON.encode!(%{})}}",
                        status_code: 200, headers: [] }
   end
 
-  # Mocks a response to a DELETE request. Just returns an HTTPotion Response
+  # Mocks a response to a DELETE request. Just returns an HTTPoison Response
   def delete(_url, _options) do
-    %HTTPotion.Response{ body: "{\"sessionId\": \"1234\", \"status\": 0, \"value\": #{JSON.encode!(%{})}}",
+    %HTTPoison.Response{ body: "{\"sessionId\": \"1234\", \"status\": 0, \"value\": #{JASON.encode!(%{})}}",
                        status_code: 204, headers: [] }
   end
 
   defp assert_get path do
-    assert called HTTPotion.get("http://127.0.0.1:8080#{path}", :_)
+    assert called HTTPoison.get("http://127.0.0.1:8080#{path}", :_)
   end
 
   defp assert_post path, body do
+    # TODO: Check if this is needed for Jason
     # Jazz shuffles map keys around.
-    b = JSON.decode!(body) |> JSON.encode!
-    assert called HTTPotion.post("http://127.0.0.1:8080#{path}", :_)
+    b = JASON.decode!(body) |> JASON.encode!
+    assert called HTTPoison.post("http://127.0.0.1:8080#{path}", :_)
   end
 
   defp assert_delete path do
-    assert called HTTPotion.delete("http://127.0.0.1:8080#{path}", :_)
+    assert called HTTPoison.delete("http://127.0.0.1:8080#{path}", :_)
   end
 end
