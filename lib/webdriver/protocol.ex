@@ -848,12 +848,14 @@ defmodule WebDriver.Protocol do
     try do
       case request.method do
         :GET ->
-          HTTPoison.get(request.url, [headers: request.headers])
+          HTTPoison.get(request.url, request.headers)
         :POST ->
-          HTTPoison.post(request.url, [body: request.body, headers: request.headers])
+          HTTPoison.post(request.url, request.body, request.headers)
         :DELETE ->
-          HTTPoison.delete(request.url, [headers: request.headers])
-      end |> handle_response(root_url) |> add_request(request)
+          HTTPoison.delete(request.url, request.headers)
+      end
+      |> handle_response(root_url)
+      |> add_request(request)
     rescue
       [HTTPoison.HTTPError, :econnrefused] ->
         # Try again a bit later cause Firefox is a sluggard.
@@ -862,7 +864,7 @@ defmodule WebDriver.Protocol do
     end
   end
 
-  defp handle_response(%HTTPoison.Response{body: body, status_code: status, headers: _headers}, _root_url)
+  defp handle_response({:ok, %HTTPoison.Response{body: body, status_code: status, headers: _headers}}, _root_url)
       when status in 200..299 do
         if :application.get_env(:debug_browser) == {:ok, true} do
           IO.inspect body
@@ -875,21 +877,21 @@ defmodule WebDriver.Protocol do
         end
   end
 
-  defp handle_response(%HTTPoison.Response{body: _body, status_code: status, headers: headers}, root_url)
+  defp handle_response({:ok, %HTTPoison.Response{body: _body, status_code: status, headers: headers}}, root_url)
       when status in 302..303 do
         # Cause some use upper case and some dont...
         url = Keyword.get(headers, :Location, Keyword.get(headers, :location))
         # Follow redirect
-        request = Request[method: :GET, url: url, headers: [{"Accept", "application/json;charset=UTF-8"}]]
+        request = %Request{method: :GET, url: url, headers: [{"Accept", "application/json;charset=UTF-8"}]}
         send_request root_url, request
   end
 
-  defp handle_response(%HTTPoison.Response{body: body, status_code: status, headers: _headers}, _root_url)
+  defp handle_response({:ok, %HTTPoison.Response{body: body, status_code: status, headers: _headers}}, _root_url)
      when status in 400..499 do
       {:invalid_request, status, body}
   end
 
-  defp handle_response(%HTTPoison.Response{body: body, status_code: status, headers: _headers}, _root_url)
+  defp handle_response({:ok, %HTTPoison.Response{body: body, status_code: status, headers: _headers}}, _root_url)
     when status in 500..599 do
      response = parse_response_body(body)
      {:failed_command, status, response}
