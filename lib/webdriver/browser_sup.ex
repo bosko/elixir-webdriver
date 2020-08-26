@@ -20,13 +20,16 @@ defmodule WebDriver.BrowserSup do
     responsible for starting a session supervisor attached to this
     supervisor.
   """
-  def start_link config do
-    :supervisor.start_link __MODULE__, config
+  def start_link(config) do
+    Supervisor.start_link __MODULE__, config, []
   end
 
-  def init config do
-    child_processes = [ worker(Keyword.get(@browsers, config.browser),
-                        [config, self()])]
-    supervise child_processes, strategy: :rest_for_one
+  def init(config) do
+    child_processes = [
+      worker(Keyword.get(@browsers, config.browser),
+        [config, self()])
+    ]
+
+    Supervisor.init(child_processes, strategy: :rest_for_one)
   end
 end

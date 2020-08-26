@@ -13,25 +13,29 @@ defmodule WebDriver.Supervisor do
   """
 
   def start_link _state do
-    :supervisor.start_link {:local, :webdriver}, __MODULE__, []
+    Supervisor.start_link __MODULE__, :ok, []
   end
 
-  def init _state do
-    supervise [], strategy: :one_for_one
+  def init(:ok) do
+    children = [
+      {DynamicSupervisor, name: :webdriver, strategy: :one_for_one}
+    ]
+
+    Supervisor.init(children, strategy: :one_for_one)
   end
 
   @doc """
     Start a web browser with the specified configuration.
   """
-  def start_browser config do
-    :supervisor.start_child :webdriver, worker(WebDriver.BrowserSup,[config],[id: config.name])
+  def start_browser(config) do
+    DynamicSupervisor.start_child(:webdriver, worker(WebDriver.BrowserSup, [config], [id: config.name]))
   end
 
   @doc """
     Stop a web browser identified by the given name.
   """
   def stop_browser name do
-    :supervisor.terminate_child :webdriver, name
-    :supervisor.delete_child :webdriver, name
+    DynamicSupervisor.terminate_child :webdriver, name
+    # DynamicSupervisor.delete_child :webdriver, name
   end
 end
