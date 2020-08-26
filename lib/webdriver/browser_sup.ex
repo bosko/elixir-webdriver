@@ -10,10 +10,12 @@ defmodule WebDriver.BrowserSup do
     state.
   """
 
-  @browsers [ firefox: WebDriver.Firefox.Port,
-              phantomjs: WebDriver.PhantomJS.Port,
-              chrome: WebDriver.Chrome.Port,
-              remote: WebDriver.Remote.Port ]
+  @browsers [
+    firefox: WebDriver.Firefox.Port,
+    phantomjs: WebDriver.PhantomJS.Port,
+    chrome: WebDriver.Chrome.Port,
+    remote: WebDriver.Remote.Port
+  ]
 
   @doc """
     Starts up a browser. The browser is then
@@ -21,13 +23,15 @@ defmodule WebDriver.BrowserSup do
     supervisor.
   """
   def start_link(config) do
-    Supervisor.start_link __MODULE__, config, []
+    Supervisor.start_link(__MODULE__, config, [])
   end
 
   def init(config) do
     child_processes = [
-      worker(Keyword.get(@browsers, config.browser),
-        [config, self()])
+      worker(
+        Keyword.get(@browsers, config.browser),
+        [config, self()]
+      )
     ]
 
     Supervisor.init(child_processes, strategy: :rest_for_one)

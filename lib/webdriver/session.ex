@@ -45,16 +45,16 @@ defmodule WebDriver.Session do
   @doc """
     Starts the session.
   """
-  def start_link state, name do
+  def start_link(state, name) do
     state = %{state | name: name}
-    :gen_server.start_link({:local, name}, __MODULE__ , state, [])
+    :gen_server.start_link({:local, name}, __MODULE__, state, [])
   end
 
   @doc """
     Stop the session.
   """
-  def stop name do
-    :gen_server.cast name, :stop
+  def stop(name) do
+    :gen_server.cast(name, :stop)
   end
 
   @doc """
@@ -62,43 +62,43 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/status
   """
-  def status name do
-    get_value name, :status
+  def status(name) do
+    get_value(name, :status)
   end
 
   @doc """
     Returns the negotiated capabilities of the current session.
   """
-  def negotiated_capabilities name do
-    {:ok, capabilities} = :gen_server.call name, :capabilities
+  def negotiated_capabilities(name) do
+    {:ok, capabilities} = :gen_server.call(name, :capabilities)
     capabilities
   end
 
   @doc """
     True if javascript is enabled for this session
   """
-  def javascript_enabled? name do
+  def javascript_enabled?(name) do
     negotiated_capabilities(name).javascriptEnabled
   end
 
   @doc """
     True if this session can take screenshots.
   """
-  def takes_screenshot? name do
+  def takes_screenshot?(name) do
     negotiated_capabilities(name).takesScreenshot
   end
 
   @doc """
     True if this session supports device rotation.
   """
-  def rotatable? name do
+  def rotatable?(name) do
     negotiated_capabilities(name).rotatable
   end
 
   @doc """
     True if this session can handle alerts
   """
-  def handles_alerts? name do
+  def handles_alerts?(name) do
     negotiated_capabilities(name).handlesAlerts
   end
 
@@ -112,17 +112,16 @@ defmodule WebDriver.Session do
       name : The session server process to start the session on.
       desired_capabilities: Capability
   """
-  def start_session name, desired_capabilities \\ %{} do
-    :gen_server.call name, { :start_session,
-                             %{desiredCapabilities: desired_capabilities}}
+  def start_session(name, desired_capabilities \\ %{}) do
+    :gen_server.call(name, {:start_session, %{desiredCapabilities: desired_capabilities}})
   end
 
   @doc """
     Stop the session with the given name. Does not stop the Erlang server, just sends
     a request to the WebDriver server to stop the session.
   """
-  def stop_session name do
-    :gen_server.call name, :stop_session
+  def stop_session(name) do
+    :gen_server.call(name, :stop_session)
   end
 
   @doc """
@@ -132,8 +131,8 @@ defmodule WebDriver.Session do
 
     Returns a list of session ids.
   """
-  def sessions name do
-    get_value name, :sessions
+  def sessions(name) do
+    get_value(name, :sessions)
   end
 
   @doc """
@@ -143,8 +142,8 @@ defmodule WebDriver.Session do
 
     Returns a capability record.
   """
-  def session name do
-    WebDriver.Capabilities.from_response(get_value name, :session)
+  def session(name) do
+    WebDriver.Capabilities.from_response(get_value(name, :session))
   end
 
   @doc """
@@ -154,8 +153,8 @@ defmodule WebDriver.Session do
 
     Parameters type: "script"|"implicit", ms: number
   """
-  def set_timeout name, type, ms do
-    cmd name, {:set_timeout, %{type: type, ms: ms}}
+  def set_timeout(name, type, ms) do
+    cmd(name, {:set_timeout, %{type: type, ms: ms}})
   end
 
   @doc """
@@ -165,8 +164,8 @@ defmodule WebDriver.Session do
 
     Parameters: [ms :: number]
   """
-  def set_async_script_timeout name, ms do
-    cmd name, {:set_async_script_timeout, %{ms: ms}}
+  def set_async_script_timeout(name, ms) do
+    cmd(name, {:set_async_script_timeout, %{ms: ms}})
   end
 
   @doc """
@@ -176,8 +175,8 @@ defmodule WebDriver.Session do
 
     Parameters: [ms :: number]
   """
-  def set_implicit_wait_timeout name, ms do
-    cmd name, {:set_implicit_wait_timeout, %{ms: ms}}
+  def set_implicit_wait_timeout(name, ms) do
+    cmd(name, {:set_implicit_wait_timeout, %{ms: ms}})
   end
 
   @doc """
@@ -188,7 +187,7 @@ defmodule WebDriver.Session do
 
     Returns: window_handle :: String
   """
-  def window_handle name do
+  def window_handle(name) do
     get_value(name, :window_handle)
   end
 
@@ -200,7 +199,7 @@ defmodule WebDriver.Session do
 
     Returns: window_handles :: List[String]
   """
-  def window_handles name do
+  def window_handles(name) do
     get_value(name, :window_handles)
   end
 
@@ -211,8 +210,8 @@ defmodule WebDriver.Session do
 
     Returns: url :: String
   """
-  def url name do
-    get_value name, :url
+  def url(name) do
+    get_value(name, :url)
   end
 
   @doc """
@@ -234,8 +233,8 @@ defmodule WebDriver.Session do
 
     Parameters [url :: String]
   """
-  def url name, url do
-    cmd name, {:url, %{url: url}}
+  def url(name, url) do
+    cmd(name, {:url, %{url: url}})
   end
 
   @doc """
@@ -243,8 +242,8 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/forward
   """
-  def forward name do
-    cmd name, :forward
+  def forward(name) do
+    cmd(name, :forward)
   end
 
   @doc """
@@ -252,8 +251,8 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/back
   """
-  def back name do
-    cmd name, :back
+  def back(name) do
+    cmd(name, :back)
   end
 
   @doc """
@@ -261,8 +260,8 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/refresh
   """
-  def refresh name do
-    cmd name, :refresh
+  def refresh(name) do
+    cmd(name, :refresh)
   end
 
   @doc """
@@ -284,9 +283,9 @@ defmodule WebDriver.Session do
     Returns: The Javascript return value, which may be a number,
              string, list or object (map).
   """
-  def execute name, script, args \\ [] do
+  def execute(name, script, args \\ []) do
     case javascript_enabled?(name) do
-      true -> get_value name, {:execute, %{script: script, args: args}}
+      true -> get_value(name, {:execute, %{script: script, args: args}})
       false -> {:error, "Javascript not enabled for this session."}
     end
   end
@@ -301,9 +300,9 @@ defmodule WebDriver.Session do
     Returns: The Javascript return value, which may be a number,
              string, list or object (map).
   """
-  def execute_async name, script, args \\ [] do
+  def execute_async(name, script, args \\ []) do
     case javascript_enabled?(name) do
-      true -> get_value name, {:execute, %{script: script, args: args}}
+      true -> get_value(name, {:execute, %{script: script, args: args}})
       false -> {:error, "Javascript not enabled for this session."}
     end
   end
@@ -315,9 +314,9 @@ defmodule WebDriver.Session do
 
     Returns: PngImage :: Binary
   """
-  def screenshot name do
+  def screenshot(name) do
     case takes_screenshot?(name) do
-      true -> get_value name, :screenshot
+      true -> get_value(name, :screenshot)
       false -> {:error, "Screenshot not enabled for this session."}
     end
   end
@@ -328,8 +327,8 @@ defmodule WebDriver.Session do
 
     Parameters: %{id: string | number | :null | WebElement}
   """
-  def frame name, id do
-    cmd name, {:frame, %{id: id}}
+  def frame(name, id) do
+    cmd(name, {:frame, %{id: id}})
   end
 
   @doc """
@@ -341,8 +340,8 @@ defmodule WebDriver.Session do
 
     Parameters: %{window_handle : string}
   """
-  def window name, window_handle do
-    cmd name, {:window, %{name: window_handle}}
+  def window(name, window_handle) do
+    cmd(name, {:window, %{name: window_handle}})
   end
 
   @doc """
@@ -350,8 +349,8 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#DELETE_/session/:sessionId/window
   """
-  def close_window name do
-    cmd name, :close_window
+  def close_window(name) do
+    cmd(name, :close_window)
   end
 
   @doc """
@@ -360,11 +359,11 @@ defmodule WebDriver.Session do
 
     http://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/window/:windowHandle/maximize
   """
-  def maximize_window name, window_handle \\ "current" do
-    cmd name, {:maximize_window, window_handle}
+  def maximize_window(name, window_handle \\ "current") do
+    cmd(name, {:maximize_window, window_handle})
   end
 
- @doc """
+  @doc """
     Retreive the window size. If a window handle is not specified it retreives the
     current window.
 
@@ -372,19 +371,19 @@ defmodule WebDriver.Session do
 
     Returns: %{height: number, width: number}
   """
-  def window_size name do
+  def window_size(name) do
     do_window_size(get_value(name, :window_size))
   end
 
-  defp do_window_size {error, response} do
+  defp do_window_size({error, response}) do
     {error, response}
   end
 
-  defp do_window_size response do
-    resp = Enum.into response, Map.new()
-    {:ok, h} = Map.fetch(resp,"height")
-    {:ok, w} = Map.fetch(resp,"width")
-    [height: h,  width: w]
+  defp do_window_size(response) do
+    resp = Enum.into(response, Map.new())
+    {:ok, h} = Map.fetch(resp, "height")
+    {:ok, w} = Map.fetch(resp, "width")
+    [height: h, width: w]
   end
 
   @doc """
@@ -398,8 +397,8 @@ defmodule WebDriver.Session do
 
     Parameters: [height :: number, width :: number]
   """
-  def window_size name, window_handle, width, height do
-    cmd name, {:window_size, window_handle, %{width: width, height: height}}
+  def window_size(name, window_handle, width, height) do
+    cmd(name, {:window_size, window_handle, %{width: width, height: height}})
   end
 
   @doc """
@@ -407,14 +406,16 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#GET_/session/:sessionId/cookie
   """
-  def cookies name do
-    Enum.map get_value(name, :cookies),
-     fn(cookie) -> WebDriver.Cookie.from_response(cookie) end
+  def cookies(name) do
+    Enum.map(
+      get_value(name, :cookies),
+      fn cookie -> WebDriver.Cookie.from_response(cookie) end
+    )
   end
 
   defp in_one_hour do
     {mega, secs, _} = :os.timestamp()
-    mega * 1000000 + secs + 3600
+    mega * 1_000_000 + secs + 3600
   end
 
   @doc """
@@ -424,17 +425,32 @@ defmodule WebDriver.Session do
 
     Parameters: [cookie :: object]
   """
-  def set_cookie name, %Cookie{name: cookie_name, value: value, path: path, domain: domain, expiry: 0} do
-    set_cookie name, cookie_name, value, path, domain
+  def set_cookie(name, %Cookie{
+        name: cookie_name,
+        value: value,
+        path: path,
+        domain: domain,
+        expiry: 0
+      }) do
+    set_cookie(name, cookie_name, value, path, domain)
   end
 
-  def set_cookie name, %Cookie{name: cookie_name, value: value, path: path, domain: domain, expiry: expiry} do
-    set_cookie name, cookie_name, value, path, domain, expiry
+  def set_cookie(name, %Cookie{
+        name: cookie_name,
+        value: value,
+        path: path,
+        domain: domain,
+        expiry: expiry
+      }) do
+    set_cookie(name, cookie_name, value, path, domain, expiry)
   end
 
-  def set_cookie name, cookie_name, value, path, domain, expiry \\ in_one_hour() do
-    cmd name, {:set_cookie,
-        %{cookie: %{name: cookie_name, value: value, path: path, domain: domain, expiry: expiry}}}
+  def set_cookie(name, cookie_name, value, path, domain, expiry \\ in_one_hour()) do
+    cmd(
+      name,
+      {:set_cookie,
+       %{cookie: %{name: cookie_name, value: value, path: path, domain: domain, expiry: expiry}}}
+    )
   end
 
   @doc """
@@ -442,8 +458,8 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#DELETE_/session/:sessionId/cookie
   """
-  def delete_cookies name do
-    cmd name, :delete_cookies
+  def delete_cookies(name) do
+    cmd(name, :delete_cookies)
   end
 
   @doc """
@@ -451,8 +467,8 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/cookie/:name
   """
-  def delete_cookie name, cookie_name do
-    cmd name, {:delete_cookie, cookie_name}
+  def delete_cookie(name, cookie_name) do
+    cmd(name, {:delete_cookie, cookie_name})
   end
 
   @doc """
@@ -460,8 +476,8 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/source
   """
-  def source name do
-    get_value name, :source
+  def source(name) do
+    get_value(name, :source)
   end
 
   @doc """
@@ -469,23 +485,23 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/title
   """
-  def title name do
-    get_value name, :title
+  def title(name) do
+    get_value(name, :title)
   end
 
   @selectors [
-      class_name: "class name",
-      css: "css selector",
-      id: "id",
-      name: "name",
-      link: "link text",
-      partial_link: "partial link text",
-      tag: "tag name",
-      xpath: "xpath",
-      class: "class name" ]
+    class_name: "class name",
+    css: "css selector",
+    id: "id",
+    name: "name",
+    link: "link text",
+    partial_link: "partial link text",
+    tag: "tag name",
+    xpath: "xpath",
+    class: "class name"
+  ]
 
-
-  defp element_value value, name do
+  defp element_value(value, name) do
     # Don't raise exceptions when we can't find an element. Just return nothing.
     case value do
       {:no_such_element, _resp} -> nil
@@ -530,8 +546,8 @@ defmodule WebDriver.Session do
       %WebDriver.Element{id: ":wdc:1373691496543", session: :test}
 
   """
-  def element name, using, value do
-    get_value(name, {:element, %{ using: Keyword.get(@selectors,using), value: value }})
+  def element(name, using, value) do
+    get_value(name, {:element, %{using: Keyword.get(@selectors, using), value: value}})
     |> element_value(name)
   end
 
@@ -546,17 +562,19 @@ defmodule WebDriver.Session do
     Parameters: [using :: atom, value :: String, start_element :: WebDriver.Element.Reference]
 
   """
-  def element name, using, value, start_element do
-    get_value(name, {:element, start_element.id,
-                    %{ using: Keyword.get(@selectors,using), value: value }})
+  def element(name, using, value, start_element) do
+    get_value(
+      name,
+      {:element, start_element.id, %{using: Keyword.get(@selectors, using), value: value}}
+    )
     |> element_value(name)
   end
 
-  defp elements_value value, name do
+  defp elements_value(value, name) do
     case value do
       {:no_such_element, _resp} -> []
       {:unknown_error, resp} -> {:unknown_error, resp}
-      element_list -> Enum.map(element_list, fn(e) -> element_value(e,name) end)
+      element_list -> Enum.map(element_list, fn e -> element_value(e, name) end)
     end
   end
 
@@ -568,9 +586,8 @@ defmodule WebDriver.Session do
     See element/3 for details on the parameters used.
     Returns a list of Element structs.
   """
-  def elements name, using, value do
-    get_value(name, {:elements,
-                     %{ using: Keyword.get(@selectors,using), value: value }})
+  def elements(name, using, value) do
+    get_value(name, {:elements, %{using: Keyword.get(@selectors, using), value: value}})
     |> elements_value(name)
   end
 
@@ -584,10 +601,13 @@ defmodule WebDriver.Session do
     The start_element parameter must be a WebDriver.Element struct.
     Returns a list of Element structs.
   """
-  def elements name, using, value, start_element do
-    get_value(name, {:elements, start_element.id,
-                     %{ using: Keyword.get(@selectors,using), value: value }})
-      0
+  def elements(name, using, value, start_element) do
+    get_value(
+      name,
+      {:elements, start_element.id, %{using: Keyword.get(@selectors, using), value: value}}
+    )
+
+    0
     |> elements_value(name)
   end
 
@@ -596,7 +616,7 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/active
   """
-  def active_element name do
+  def active_element(name) do
     get_value(name, :active_element) |> element_value(name)
   end
 
@@ -613,8 +633,8 @@ defmodule WebDriver.Session do
 
     Parameters: [ value :: String ]
   """
-  def keys name, value do
-    cmd name, {:keys, %{value: String.codepoints value}}
+  def keys(name, value) do
+    cmd(name, {:keys, %{value: String.codepoints(value)}})
   end
 
   @doc """
@@ -623,9 +643,9 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#GET_/session/:sessionId/orientation
   """
-  def orientation name do
-    case rotatable? name do
-      true -> get_value name, :orientation
+  def orientation(name) do
+    case rotatable?(name) do
+      true -> get_value(name, :orientation)
       false -> {:error, "Session does not support device rotation."}
     end
   end
@@ -638,20 +658,19 @@ defmodule WebDriver.Session do
 
     Screen orientaton can be either :portrait or :landscape.
   """
-  def orientation name, screen_orientation do
-    case rotatable? name do
-      true -> do_orientation name, screen_orientation
+  def orientation(name, screen_orientation) do
+    case rotatable?(name) do
+      true -> do_orientation(name, screen_orientation)
       false -> {:error, "Session does not support device rotation."}
     end
   end
 
-  defp do_orientation name, screen_orientation do
+  defp do_orientation(name, screen_orientation) do
     case screen_orientation do
-      :landscape -> cmd name, {:orientation, %{ orientation: "LANDSCAPE"}}
-      :portrait  -> cmd name, {:orientation, %{ orientation: "PORTRAIT"}}
+      :landscape -> cmd(name, {:orientation, %{orientation: "LANDSCAPE"}})
+      :portrait -> cmd(name, {:orientation, %{orientation: "PORTRAIT"}})
     end
   end
-
 
   @doc """
     Gets the text of the currently displayed JavaScript alert(), confirm(),
@@ -659,9 +678,9 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/alert_text
   """
-  def alert_text name do
-    case handles_alerts? name do
-      true -> get_value name, :alert_text
+  def alert_text(name) do
+    case handles_alerts?(name) do
+      true -> get_value(name, :alert_text)
       false -> {:error, "Session does not handle alert, confirm or prompt dialogs."}
     end
   end
@@ -671,9 +690,9 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/alert_text
   """
-  def alert_text name, keys do
-    case handles_alerts? name do
-      true -> cmd name, {:alert_text, %{text: keys}}
+  def alert_text(name, keys) do
+    case handles_alerts?(name) do
+      true -> cmd(name, {:alert_text, %{text: keys}})
       false -> {:error, "Session does not handle alert, confirm or prompt dialogs."}
     end
   end
@@ -683,9 +702,9 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/accept_alert
   """
-  def accept_alert name do
-    case handles_alerts? name do
-      true -> cmd name, :accept_alert
+  def accept_alert(name) do
+    case handles_alerts?(name) do
+      true -> cmd(name, :accept_alert)
       false -> {:error, "Session does not handle alert, confirm or prompt dialogs."}
     end
   end
@@ -695,43 +714,50 @@ defmodule WebDriver.Session do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/dismiss_alert
   """
-  def dismiss_alert name do
-    case handles_alerts? name do
-      true -> cmd name, :dismiss_alert
+  def dismiss_alert(name) do
+    case handles_alerts?(name) do
+      true -> cmd(name, :dismiss_alert)
       false -> {:error, "Session does not handle alert, confirm or prompt dialogs."}
     end
   end
 
-###############################################################
-#
-# GenServer callbacks
-#
-###############################################################
+  ###############################################################
+  #
+  # GenServer callbacks
+  #
+  ###############################################################
 
-  def init state do
-    {:ok, response} = WebDriver.Protocol.start_session state.root_url,
-               %{desiredCapabilities: state.desiredCapabilities}
-    state = %{state | negotiatedCapabilities: WebDriver.Capabilities.from_response(response.value)}
-    {:ok, %{state | session_id: response.session_id }}
+  def init(state) do
+    {:ok, response} =
+      WebDriver.Protocol.start_session(
+        state.root_url,
+        %{desiredCapabilities: state.desiredCapabilities}
+      )
+
+    state = %{
+      state
+      | negotiatedCapabilities: WebDriver.Capabilities.from_response(response.value)
+    }
+
+    {:ok, %{state | session_id: response.session_id}}
   end
 
   def handle_cast(:stop, state) do
     {:stop, :normal, state}
   end
 
-  def handle_call :capabilities, _sender, state do
-    {:reply, {:ok, state.negotiatedCapabilities}, state }
+  def handle_call(:capabilities, _sender, state) do
+    {:reply, {:ok, state.negotiatedCapabilities}, state}
   end
 
   def handle_call({:start_session, params}, _sender, state) do
-    {:ok, response} = WebDriver.Protocol.start_session state.root_url, params
-    {:reply, {:ok, response},  %{state | session_id: response.session_id }}
+    {:ok, response} = WebDriver.Protocol.start_session(state.root_url, params)
+    {:reply, {:ok, response}, %{state | session_id: response.session_id}}
   end
 
   # Calls when no session is running.
   def handle_call({function, params}, _sender, state = %State{session_id: :null}) do
-    response = :erlang.apply(WebDriver.Protocol, function,
-                                  [state.root_url, params])
+    response = :erlang.apply(WebDriver.Protocol, function, [state.root_url, params])
     {:reply, response, state}
   end
 
@@ -742,31 +768,32 @@ defmodule WebDriver.Session do
 
   # Calls when there is a session.
   def handle_call({function, arg1, params}, _sender, state) do
-    response = :erlang.apply(WebDriver.Protocol, function,
-                             [state.root_url, state.session_id, arg1, params])
+    response =
+      :erlang.apply(WebDriver.Protocol, function, [state.root_url, state.session_id, arg1, params])
+
     {:reply, response, state}
   end
 
   def handle_call({function, params}, _sender, state) do
-    response = :erlang.apply(WebDriver.Protocol, function,
-                             [state.root_url, state.session_id, params])
+    response =
+      :erlang.apply(WebDriver.Protocol, function, [state.root_url, state.session_id, params])
+
     {:reply, response, state}
   end
 
   def handle_call(function, _sender, state) do
-    response = :erlang.apply(WebDriver.Protocol, function,
-                             [state.root_url, state.session_id])
+    response = :erlang.apply(WebDriver.Protocol, function, [state.root_url, state.session_id])
     {:reply, response, state}
   end
 
-  defp get_value name, function do
-    case :gen_server.call name, function do
+  defp get_value(name, function) do
+    case :gen_server.call(name, function) do
       {:ok, response} -> response.value
       response -> response
     end
   end
 
-  defp cmd name, request do
-    :gen_server.call name, request, 20000
+  defp cmd(name, request) do
+    :gen_server.call(name, request, 20000)
   end
 end

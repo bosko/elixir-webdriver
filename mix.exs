@@ -2,7 +2,8 @@ defmodule WebDriver.Mixfile do
   use Mix.Project
 
   def project do
-    [ app: :webdriver,
+    [
+      app: :webdriver,
       version: "0.9.0",
       description: "Webdriver protocol for driving web browsers.",
       source_url: "https://github.com/stuart/elixir-webdriver",
@@ -19,10 +20,10 @@ defmodule WebDriver.Mixfile do
   # Configuration for the OTP application
   def application do
     [
-      mod: { WebDriver, []},
-      registered:   [ :webdriver ],
-      applications: [ :httpoison ],
-      env: [ debug_browser: false ]
+      mod: {WebDriver, []},
+      registered: [:webdriver],
+      applications: [:httpoison],
+      env: [debug_browser: false]
     ]
   end
 
@@ -32,19 +33,21 @@ defmodule WebDriver.Mixfile do
     [
       # {:ibrowse,   github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
       {:httpoison, "~> 1.6"},
-      {:jason,      "~> 1.2"},
-      {:mock,      github: "jjh42/mock", only: :test},
+      {:jason, "~> 1.2"},
+      {:mock, github: "jjh42/mock", only: :test},
       # {:earmark,   "~>0.1.10", only: :dev},
-      {:ex_doc,    "~>0.22", only: :dev}
-     ]
+      {:ex_doc, "~>0.22", only: :dev}
+    ]
   end
 
   defp package do
     [
       contributors: ["Stuart Coyle", "Carl Woodward", "Boško Ivannišević"],
       licenses: ["MIT License"],
-      links: %{"GitHub" => "https://github.com/stuart/elixir-webdriver",
-               "Docs" => "http://stuart.github.io/elixir-webdriver/"}
+      links: %{
+        "GitHub" => "https://github.com/stuart/elixir-webdriver",
+        "Docs" => "http://stuart.github.io/elixir-webdriver/"
+      }
     ]
   end
 end

@@ -1,4 +1,4 @@
-Code.require_file "../test_helper.exs", __DIR__
+Code.require_file("../test_helper.exs", __DIR__)
 
 defmodule WebDriverKeysTest do
   use ExUnit.Case, async: true
@@ -10,7 +10,7 @@ defmodule WebDriverKeysTest do
   end
 
   test "an invalid key code" do
-    assert {:error, :invalid_key_code } == Keys.key(:not_a_key)
+    assert {:error, :invalid_key_code} == Keys.key(:not_a_key)
   end
 
   test "A string containing key codes" do

@@ -45,7 +45,7 @@ defmodule WebDriver.Capabilities do
     * `proxy` - details of any web proxy to use.
   """
 
-  def from_response response do
-    struct(WebDriver.Capabilities, Enum.map(response, fn({k,v}) -> {String.to_atom(k),v} end))
+  def from_response(response) do
+    struct(WebDriver.Capabilities, Enum.map(response, fn {k, v} -> {String.to_atom(k), v} end))
   end
 end

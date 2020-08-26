@@ -13,9 +13,9 @@ defmodule WebDriver.Mouse do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/moveto
   """
-  def move_to element, offsetx \\ 0, offsety \\ 0 do
-    id = URI.decode element.id
-    cmd element.session, :move_to, %{element: id, xoffset: offsetx, yoffset: offsety}
+  def move_to(element, offsetx \\ 0, offsety \\ 0) do
+    id = URI.decode(element.id)
+    cmd(element.session, :move_to, %{element: id, xoffset: offsetx, yoffset: offsety})
   end
 
   @doc """
@@ -27,10 +27,9 @@ defmodule WebDriver.Mouse do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/click
   """
-  def click session, button \\ :left do
-    cmd session, :mouse_click, %{button: button_number(button)}
+  def click(session, button \\ :left) do
+    cmd(session, :mouse_click, %{button: button_number(button)})
   end
-
 
   @doc """
     Send a Button Down event.
@@ -44,8 +43,8 @@ defmodule WebDriver.Mouse do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/buttondown
   """
-  def button_down session, button \\ :left do
-    cmd session, :mouse_button_down, %{button: button_number(button)}
+  def button_down(session, button \\ :left) do
+    cmd(session, :mouse_button_down, %{button: button_number(button)})
   end
 
   @doc """
@@ -60,8 +59,8 @@ defmodule WebDriver.Mouse do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/buttonup
   """
-  def button_up session, button \\ :left do
-    cmd session, :mouse_button_up, %{button: button_number(button)}
+  def button_up(session, button \\ :left) do
+    cmd(session, :mouse_button_up, %{button: button_number(button)})
   end
 
   @doc """
@@ -73,16 +72,24 @@ defmodule WebDriver.Mouse do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/doubleclick
   """
-  def double_click session, button \\ :left do
-    cmd session, :mouse_double_click, %{button: button_number(button)}
+  def double_click(session, button \\ :left) do
+    cmd(session, :mouse_double_click, %{button: button_number(button)})
   end
 
   # Send a command to the server
-  defp cmd session, command, params do
-    :gen_server.call session, {command, params}, 20000
+  defp cmd(session, command, params) do
+    :gen_server.call(session, {command, params}, 20000)
   end
 
-  defp button_number :left   do 0 end
-  defp button_number :middle do 1 end
-  defp button_number :right  do 2 end
+  defp button_number(:left) do
+    0
+  end
+
+  defp button_number(:middle) do
+    1
+  end
+
+  defp button_number(:right) do
+    2
+  end
 end

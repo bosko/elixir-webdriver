@@ -25,8 +25,8 @@ defmodule WebDriver.Element do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/click
   """
-  def click element do
-    cmd element, :click
+  def click(element) do
+    cmd(element, :click)
   end
 
   @doc """
@@ -34,8 +34,8 @@ defmodule WebDriver.Element do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/submit
   """
-  def submit element do
-    cmd element, :submit
+  def submit(element) do
+    cmd(element, :submit)
   end
 
   @doc """
@@ -43,8 +43,8 @@ defmodule WebDriver.Element do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/text
   """
-  def text element do
-    get_value element, :text
+  def text(element) do
+    get_value(element, :text)
   end
 
   @doc """
@@ -54,8 +54,8 @@ defmodule WebDriver.Element do
 
     Parameters: %{value: String}
   """
-  def value element, value do
-    cmd element, :value, %{value: String.codepoints value}
+  def value(element, value) do
+    cmd(element, :value, %{value: String.codepoints(value)})
   end
 
   @doc """
@@ -63,8 +63,8 @@ defmodule WebDriver.Element do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/name
   """
-  def name element do
-    get_value element, :name
+  def name(element) do
+    get_value(element, :name)
   end
 
   @doc """
@@ -72,8 +72,8 @@ defmodule WebDriver.Element do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/clear
   """
-  def clear element do
-    cmd element, :clear
+  def clear(element) do
+    cmd(element, :clear)
   end
 
   @doc """
@@ -82,8 +82,9 @@ defmodule WebDriver.Element do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/selected
   """
-  def selected? element do
-    value = get_value element, :selected
+  def selected?(element) do
+    value = get_value(element, :selected)
+
     case value do
       {:element_not_selectable, _resp} -> nil
       _ -> value
@@ -95,8 +96,8 @@ defmodule WebDriver.Element do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/enabled
   """
-  def enabled? element do
-    get_value element, :enabled
+  def enabled?(element) do
+    get_value(element, :enabled)
   end
 
   @doc """
@@ -104,8 +105,8 @@ defmodule WebDriver.Element do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/attribute/:name
   """
-  def attribute element, attribute_name do
-    get_value element, :attribute, attribute_name
+  def attribute(element, attribute_name) do
+    get_value(element, :attribute, attribute_name)
   end
 
   @doc """
@@ -113,8 +114,8 @@ defmodule WebDriver.Element do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/equals/:other
   """
-  def equals? element, other_element do
-    get_value element, :equals, other_element.id
+  def equals?(element, other_element) do
+    get_value(element, :equals, other_element.id)
   end
 
   @doc """
@@ -122,8 +123,8 @@ defmodule WebDriver.Element do
 
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/displayed
   """
-  def displayed? element do
-    get_value element, :displayed
+  def displayed?(element) do
+    get_value(element, :displayed)
   end
 
   @doc """
@@ -134,15 +135,18 @@ defmodule WebDriver.Element do
 
     Returns %{x: x, y: y}
   """
-  def location element do
-    case get_value element, :location do
-    # Bug with Python Selenium
-    # http://code.google.com/p/selenium/source/detail?r=bbcfab457b13
-    %{"toString" => _,"x" => x,"y" => y} ->
+  def location(element) do
+    case get_value(element, :location) do
+      # Bug with Python Selenium
+      # http://code.google.com/p/selenium/source/detail?r=bbcfab457b13
+      %{"toString" => _, "x" => x, "y" => y} ->
         %{x: x, y: y}
-    %{"x" => x, "y" => y} ->
+
+      %{"x" => x, "y" => y} ->
         %{x: x, y: y}
-    response -> # Pass error responses through.
+
+      # Pass error responses through.
+      response ->
         response
     end
   end
@@ -154,15 +158,15 @@ defmodule WebDriver.Element do
 
     Returns %{x: x, y: y}
   """
-  def location_in_view element do
+  def location_in_view(element) do
     do_location_in_view(get_value(element, :location))
   end
 
-  defp do_location_in_view {error, response} do
+  defp do_location_in_view({error, response}) do
     {error, response}
   end
 
-  defp do_location_in_view response do
+  defp do_location_in_view(response) do
     # Bugfix
     # http://code.google.com/p/selenium/source/detail?r=bbcfab457b13
     %{x: response["x"], y: response["y"]}
@@ -175,15 +179,15 @@ defmodule WebDriver.Element do
 
     Returns %{width: w, height: h}
   """
-  def size element do
+  def size(element) do
     do_size(get_value(element, :size))
   end
 
-  defp do_size {error, response} do
+  defp do_size({error, response}) do
     {error, response}
   end
 
-  defp do_size response do
+  defp do_size(response) do
     %{width: response["width"], height: response["height"]}
   end
 
@@ -193,32 +197,32 @@ defmodule WebDriver.Element do
 
     Returns a string.
   """
-  def css element, property_name do
-    get_value element, :css, property_name
+  def css(element, property_name) do
+    get_value(element, :css, property_name)
   end
 
-# Private Functions
+  # Private Functions
   # Get a value from the server
-  defp get_value element, command do
-    case :gen_server.call element.session, {command, element.id}, 60000 do
+  defp get_value(element, command) do
+    case :gen_server.call(element.session, {command, element.id}, 60000) do
       {:ok, response} -> response.value
       response -> response
     end
   end
 
-  defp get_value element, command, params do
-    case :gen_server.call element.session, {command, element.id, params}, 60000 do
+  defp get_value(element, command, params) do
+    case :gen_server.call(element.session, {command, element.id, params}, 60000) do
       {:ok, response} -> response.value
       response -> response
     end
   end
 
   # Send a command to the server
-  defp cmd element, command do
-    :gen_server.call element.session, {command, element.id}, 20000
+  defp cmd(element, command) do
+    :gen_server.call(element.session, {command, element.id}, 20000)
   end
 
-  defp cmd element, command, params do
-    :gen_server.call element.session, {command, element.id, params}, 20000
+  defp cmd(element, command, params) do
+    :gen_server.call(element.session, {command, element.id, params}, 20000)
   end
 end

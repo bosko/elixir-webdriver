@@ -14,51 +14,58 @@ defmodule WebDriver.Chrome.Port do
   defmodule State do
     @program_name :chromedriver
     defstruct port: nil,
-               root_url: "",
-               program_name: @program_name,
-               supervisor: nil,
-               session_supervisor: nil,
-               sessions: [],
-               http_port: nil
+              root_url: "",
+              program_name: @program_name,
+              supervisor: nil,
+              session_supervisor: nil,
+              sessions: [],
+              http_port: nil
   end
+
   use WebDriver.Browser
 
-  def set_root_url state do
-    {:ok, http_port} = WebDriver.PortFinder.select_port
+  def set_root_url(state) do
+    {:ok, http_port} = WebDriver.PortFinder.select_port()
     %{state | http_port: http_port, root_url: "http://localhost:#{http_port}/wd/hub"}
   end
 
-  def do_init state do
+  def do_init(state) do
     state
   end
 
-  def program_name state do
-    :os.find_executable state.program_name
+  def program_name(state) do
+    :os.find_executable(state.program_name)
   end
 
-  def arguments state do
+  def arguments(state) do
     port_arg = String.to_charlist("--port=#{state.http_port}")
-    [port_arg,'--url-base=wd/hub']
+    [port_arg, '--url-base=wd/hub']
   end
 
-  def wait_for_start state do
+  def wait_for_start(state) do
     receive do
-      {_,{:data, 'Starting ChromeDriver' ++ _}} -> { :ok, state }
-      after @start_wait_timeout ->
-        :error_logger.error_msg "Chromedriver has not started.\n\
-                         Check that you can start it with: #{program_name(state)} #{arguments(state)}"
-        { :error, state }
+      {_, {:data, 'Starting ChromeDriver' ++ _}} -> {:ok, state}
+    after
+      @start_wait_timeout ->
+        :error_logger.error_msg(
+          "Chromedriver has not started.\n\
+                         Check that you can start it with: #{program_name(state)} #{
+            arguments(state)
+          }"
+        )
+
+        {:error, state}
     end
   end
 
-  def normal_termination state do
+  def normal_termination(state) do
     # Send a shutdown signal to the ChromeDriver process.
-    %HTTPoison.Response{} = HTTPoison.get "#{state.root_url}/shutdown"
-    Port.close state.port
+    %HTTPoison.Response{} = HTTPoison.get("#{state.root_url}/shutdown")
+    Port.close(state.port)
     :ok
   end
 
-  def browser_terminated _state do
+  def browser_terminated(_state) do
     :ok
   end
 end

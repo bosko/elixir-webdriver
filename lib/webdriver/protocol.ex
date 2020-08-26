@@ -27,7 +27,7 @@ defmodule WebDriver.Protocol do
     that response.
   """
   defmodule Response do
-    defstruct  session_id: :null, status: 0, value: :null, request: :null
+    defstruct session_id: :null, status: 0, value: :null, request: :null
   end
 
   defmodule Request do
@@ -35,7 +35,7 @@ defmodule WebDriver.Protocol do
   end
 
   def shutdown(root_url) do
-    get root_url, ["shutdown"]
+    get(root_url, ["shutdown"])
   end
 
   @doc """
@@ -54,7 +54,7 @@ defmodule WebDriver.Protocol do
       [{"build",[{"version","1.0.3"}]},{"os",[{"name","mac"},{"version","10.8 (Mountain Lion)"},{"arch","32bit"}]}]
   """
   def status(root_url, _session_id \\ :null) do
-    get root_url, ["status"]
+    get(root_url, ["status"])
   end
 
   @doc """
@@ -70,7 +70,7 @@ defmodule WebDriver.Protocol do
       "370f0750-e1dd-11e2-af7a-8562953caa56"
   """
   def start_session(root_url, parameters) do
-    post root_url, ["session"], parameters
+    post(root_url, ["session"], parameters)
   end
 
   @doc """
@@ -78,7 +78,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#GET_/sessions
   """
   def sessions(root_url, _session_id \\ :null) do
-    get root_url, ["sessions"]
+    get(root_url, ["sessions"])
   end
 
   @doc """
@@ -86,7 +86,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId
   """
   def session(root_url, session_id) do
-    get root_url, ["session", session_id]
+    get(root_url, ["session", session_id])
   end
 
   @doc """
@@ -94,7 +94,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#DELETE_/session/:sessionId
   """
   def stop_session(root_url, session_id) do
-    delete root_url, ["session", session_id]
+    delete(root_url, ["session", session_id])
   end
 
   @doc """
@@ -105,7 +105,7 @@ defmodule WebDriver.Protocol do
     Parameters [type: "script"|"implicit", ms: number]
   """
   def set_timeout(root_url, session_id, parameters) do
-    session_post root_url, session_id, "timeouts", parameters
+    session_post(root_url, session_id, "timeouts", parameters)
   end
 
   @doc """
@@ -115,7 +115,7 @@ defmodule WebDriver.Protocol do
     Parameters: [ms: number]
   """
   def set_async_script_timeout(root_url, session_id, parameters) do
-    post root_url, ["session", session_id, "timeouts", "async_script"], parameters
+    post(root_url, ["session", session_id, "timeouts", "async_script"], parameters)
   end
 
   @doc """
@@ -125,7 +125,7 @@ defmodule WebDriver.Protocol do
     Parameters: [ms: number]
   """
   def set_implicit_wait_timeout(root_url, session_id, parameters) do
-    post root_url, ["session", session_id, "timeouts", "implicit_wait"], parameters
+    post(root_url, ["session", session_id, "timeouts", "implicit_wait"], parameters)
   end
 
   @doc """
@@ -133,7 +133,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/window_handle
   """
   def window_handle(root_url, session_id) do
-    session_get root_url, session_id, "window_handle"
+    session_get(root_url, session_id, "window_handle")
   end
 
   @doc """
@@ -141,7 +141,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/window_handles
   """
   def window_handles(root_url, session_id) do
-    session_get root_url, session_id, "window_handles"
+    session_get(root_url, session_id, "window_handles")
   end
 
   @doc """
@@ -149,7 +149,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#GET_/session/:sessionId/url
   """
   def url(root_url, session_id) do
-    session_get root_url, session_id, "url"
+    session_get(root_url, session_id, "url")
   end
 
   @doc """
@@ -159,7 +159,7 @@ defmodule WebDriver.Protocol do
     Parameters: [url: new_url]
   """
   def url(root_url, session_id, parameters) do
-    session_post root_url, session_id, "url", parameters
+    session_post(root_url, session_id, "url", parameters)
   end
 
   @doc """
@@ -167,7 +167,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/forward
   """
   def forward(root_url, session_id) do
-    session_post root_url, session_id, "forward"
+    session_post(root_url, session_id, "forward")
   end
 
   @doc """
@@ -175,7 +175,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/back
   """
   def back(root_url, session_id) do
-    session_post root_url, session_id, "back"
+    session_post(root_url, session_id, "back")
   end
 
   @doc """
@@ -183,7 +183,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/refresh
   """
   def refresh(root_url, session_id) do
-    session_post root_url, session_id, "refresh"
+    session_post(root_url, session_id, "refresh")
   end
 
   @doc """
@@ -202,7 +202,7 @@ defmodule WebDriver.Protocol do
 
   """
   def execute(root_url, session_id, parameters) do
-    session_post root_url, session_id, "execute", parameters
+    session_post(root_url, session_id, "execute", parameters)
   end
 
   @doc """
@@ -212,7 +212,7 @@ defmodule WebDriver.Protocol do
     Parameters: [script: string, args: list]
   """
   def execute_async(root_url, session_id, parameters) do
-    session_post root_url, session_id, "execute_async", parameters
+    session_post(root_url, session_id, "execute_async", parameters)
   end
 
   @doc """
@@ -222,7 +222,7 @@ defmodule WebDriver.Protocol do
     Returns a base64 encoded PNG image.
   """
   def screenshot(root_url, session_id) do
-    session_get root_url, session_id, "screenshot"
+    session_get(root_url, session_id, "screenshot")
   end
 
   @doc """
@@ -239,7 +239,7 @@ defmodule WebDriver.Protocol do
     Parameters: [id: string | number | :null | WebElement]
   """
   def frame(root_url, session_id, parameters) do
-    session_post root_url, session_id, "frame", parameters
+    session_post(root_url, session_id, "frame", parameters)
   end
 
   @doc """
@@ -251,7 +251,7 @@ defmodule WebDriver.Protocol do
     Parameters: [name: string]
   """
   def window(root_url, session_id, parameters) do
-    session_post root_url, session_id, "window", parameters
+    session_post(root_url, session_id, "window", parameters)
   end
 
   @doc """
@@ -259,7 +259,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#DELETE_/session/:sessionId/window
   """
   def close_window(root_url, session_id) do
-    session_delete root_url, session_id, "window"
+    session_delete(root_url, session_id, "window")
   end
 
   @doc """
@@ -278,11 +278,11 @@ defmodule WebDriver.Protocol do
   end
 
   defp do_window_size(root_url, session_id, window_handle, :null) do
-    session_get root_url, session_id,  "window/#{window_handle}/size"
+    session_get(root_url, session_id, "window/#{window_handle}/size")
   end
 
   defp do_window_size(root_url, session_id, window_handle, parameters) do
-    session_post root_url, session_id, "window/#{window_handle}/size", parameters
+    session_post(root_url, session_id, "window/#{window_handle}/size", parameters)
   end
 
   @doc """
@@ -299,11 +299,11 @@ defmodule WebDriver.Protocol do
   end
 
   defp do_window_position(root_url, session_id, window_handle, :null) do
-    session_get root_url, session_id, "window/#{window_handle}/position"
+    session_get(root_url, session_id, "window/#{window_handle}/position")
   end
 
   defp do_window_position(root_url, session_id, window_handle, parameters) do
-    session_post root_url, session_id, "window/#{window_handle}/position", parameters
+    session_post(root_url, session_id, "window/#{window_handle}/position", parameters)
   end
 
   @doc """
@@ -312,7 +312,7 @@ defmodule WebDriver.Protocol do
 
   """
   def maximize_window(root_url, session_id, window_handle \\ "current") do
-    session_post root_url, session_id, "window/#{window_handle}/maximize"
+    session_post(root_url, session_id, "window/#{window_handle}/maximize")
   end
 
   @doc """
@@ -320,7 +320,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#GET_/session/:sessionId/cookie
   """
   def cookies(root_url, session_id) do
-    session_get root_url, session_id, "cookie"
+    session_get(root_url, session_id, "cookie")
   end
 
   @doc """
@@ -330,7 +330,7 @@ defmodule WebDriver.Protocol do
     Parameters: [cookie: object]
   """
   def set_cookie(root_url, session_id, parameters) do
-    session_post root_url, session_id, "cookie", parameters
+    session_post(root_url, session_id, "cookie", parameters)
   end
 
   @doc """
@@ -338,7 +338,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#DELETE_/session/:sessionId/cookie
   """
   def delete_cookies(root_url, session_id) do
-    session_delete root_url, session_id, "cookie"
+    session_delete(root_url, session_id, "cookie")
   end
 
   @doc """
@@ -346,7 +346,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/cookie/:name
   """
   def delete_cookie(root_url, session_id, name) do
-    session_delete root_url, session_id, "cookie/#{name}"
+    session_delete(root_url, session_id, "cookie/#{name}")
   end
 
   @doc """
@@ -354,7 +354,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/source
   """
   def source(root_url, session_id) do
-    session_get root_url, session_id, "source"
+    session_get(root_url, session_id, "source")
   end
 
   @doc """
@@ -362,7 +362,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/title
   """
   def title(root_url, session_id) do
-    session_get root_url, session_id, "title"
+    session_get(root_url, session_id, "title")
   end
 
   @doc """
@@ -374,7 +374,7 @@ defmodule WebDriver.Protocol do
      value: string]
   """
   def element(root_url, session_id, parameters) do
-    session_post root_url, session_id, "element", parameters
+    session_post(root_url, session_id, "element", parameters)
   end
 
   @doc """
@@ -387,7 +387,7 @@ defmodule WebDriver.Protocol do
      value: string]
   """
   def element(root_url, session_id, element_id, parameters) do
-    element_post root_url, session_id, element_id, "element", parameters
+    element_post(root_url, session_id, element_id, "element", parameters)
   end
 
   @doc """
@@ -399,7 +399,7 @@ defmodule WebDriver.Protocol do
      value: string]
   """
   def elements(root_url, session_id, parameters) do
-    session_post root_url, session_id, "elements", parameters
+    session_post(root_url, session_id, "elements", parameters)
   end
 
   @doc """
@@ -411,7 +411,7 @@ defmodule WebDriver.Protocol do
      value: string]
   """
   def elements(root_url, session_id, element_id, parameters) do
-    element_post root_url, session_id, element_id, "elements", parameters
+    element_post(root_url, session_id, element_id, "elements", parameters)
   end
 
   @doc """
@@ -419,7 +419,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/active
   """
   def active_element(root_url, session_id) do
-    session_get root_url, session_id, "element/active"
+    session_get(root_url, session_id, "element/active")
   end
 
   @doc """
@@ -427,7 +427,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id
   """
   def element_by_id(root_url, session_id, element_id) do
-    session_get root_url, session_id, "element/#{element_id}"
+    session_get(root_url, session_id, "element/#{element_id}")
   end
 
   @doc """
@@ -435,7 +435,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/click
   """
   def click(root_url, session_id, element_id) do
-    element_post root_url, session_id, element_id, "click"
+    element_post(root_url, session_id, element_id, "click")
   end
 
   @doc """
@@ -443,7 +443,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/submit
   """
   def submit(root_url, session_id, element_id) do
-    element_post root_url, session_id, element_id, "submit"
+    element_post(root_url, session_id, element_id, "submit")
   end
 
   @doc """
@@ -451,7 +451,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/text
   """
   def text(root_url, session_id, element_id) do
-    element_get root_url, session_id, element_id, "text"
+    element_get(root_url, session_id, element_id, "text")
   end
 
   @doc """
@@ -461,7 +461,7 @@ defmodule WebDriver.Protocol do
     Parameters: [value: Array<string>]
   """
   def value(root_url, session_id, element_id, parameters) do
-    element_post root_url, session_id, element_id, "value", parameters
+    element_post(root_url, session_id, element_id, "value", parameters)
   end
 
   @doc """
@@ -471,7 +471,7 @@ defmodule WebDriver.Protocol do
     Parameters: [value: Array<string>]
   """
   def keys(root_url, session_id, parameters) do
-    session_post root_url, session_id, "keys", parameters
+    session_post(root_url, session_id, "keys", parameters)
   end
 
   @doc """
@@ -479,7 +479,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/name
   """
   def name(root_url, session_id, element_id) do
-    element_get root_url, session_id, element_id, "name"
+    element_get(root_url, session_id, element_id, "name")
   end
 
   @doc """
@@ -487,7 +487,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/clear
   """
   def clear(root_url, session_id, element_id) do
-    element_post root_url, session_id, element_id, "clear"
+    element_post(root_url, session_id, element_id, "clear")
   end
 
   @doc """
@@ -495,7 +495,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/selected
   """
   def selected(root_url, session_id, element_id) do
-    element_get root_url, session_id, element_id, "selected"
+    element_get(root_url, session_id, element_id, "selected")
   end
 
   @doc """
@@ -503,7 +503,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/enabled
   """
   def enabled(root_url, session_id, element_id) do
-    element_get root_url, session_id, element_id, "enabled"
+    element_get(root_url, session_id, element_id, "enabled")
   end
 
   @doc """
@@ -511,7 +511,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/attribute/:name
   """
   def attribute(root_url, session_id, element_id, name) do
-    element_get root_url, session_id, element_id, "attribute/#{name}"
+    element_get(root_url, session_id, element_id, "attribute/#{name}")
   end
 
   @doc """
@@ -519,7 +519,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/equals/:other
   """
   def equals(root_url, session_id, element_id, other_id) do
-    element_get root_url, session_id, element_id, "equals/#{other_id}"
+    element_get(root_url, session_id, element_id, "equals/#{other_id}")
   end
 
   @doc """
@@ -527,7 +527,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/displayed
   """
   def displayed(root_url, session_id, element_id) do
-    element_get root_url, session_id, element_id, "displayed"
+    element_get(root_url, session_id, element_id, "displayed")
   end
 
   @doc """
@@ -535,7 +535,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/location
   """
   def location(root_url, session_id, element_id) do
-    element_get root_url, session_id, element_id, "location"
+    element_get(root_url, session_id, element_id, "location")
   end
 
   @doc """
@@ -543,7 +543,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/location_in_view
   """
   def location_in_view(root_url, session_id, element_id) do
-    element_get root_url, session_id, element_id, "location_in_view"
+    element_get(root_url, session_id, element_id, "location_in_view")
   end
 
   @doc """
@@ -551,7 +551,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/size
   """
   def size(root_url, session_id, element_id) do
-    element_get root_url, session_id, element_id, "size"
+    element_get(root_url, session_id, element_id, "size")
   end
 
   @doc """
@@ -559,7 +559,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/element/:id/css/:propertyName
   """
   def css(root_url, session_id, element_id, property_name) do
-    element_get root_url, session_id, element_id, "css/#{property_name}"
+    element_get(root_url, session_id, element_id, "css/#{property_name}")
   end
 
   @doc """
@@ -567,7 +567,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#GET_/session/:sessionId/orientation
   """
   def orientation(root_url, session_id) do
-    session_get root_url, session_id, "orientation"
+    session_get(root_url, session_id, "orientation")
   end
 
   @doc """
@@ -575,7 +575,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#POST_/session/:sessionId/orientation
   """
   def orientation(root_url, session_id, parameters) do
-    session_post root_url, session_id, "orientation", parameters
+    session_post(root_url, session_id, "orientation", parameters)
   end
 
   @doc """
@@ -583,14 +583,14 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#GET_/session/:sessionId/alert_text
   """
   def alert_text(root_url, session_id) do
-    session_get root_url, session_id, "alert_text"
+    session_get(root_url, session_id, "alert_text")
   end
 
   @doc """
     Sends keystrokes to a Javascript prompt() dialog.
   """
   def alert_text(root_url, session_id, parameters) do
-    session_post root_url, session_id, "alert_text", parameters
+    session_post(root_url, session_id, "alert_text", parameters)
   end
 
   @doc """
@@ -598,7 +598,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/accept_alert
   """
   def accept_alert(root_url, session_id) do
-    session_post root_url, session_id, "accept_alert"
+    session_post(root_url, session_id, "accept_alert")
   end
 
   @doc """
@@ -606,7 +606,7 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/dismiss_alert
   """
   def dismiss_alert(root_url, session_id) do
-    session_post root_url, session_id, "dismiss_alert"
+    session_post(root_url, session_id, "dismiss_alert")
   end
 
   @doc """
@@ -616,7 +616,7 @@ defmodule WebDriver.Protocol do
     Parameters: [element: element_id, offsetx: number, offsety: number]
   """
   def move_to(root_url, session_id, parameters) do
-    session_post root_url, session_id, "moveto", parameters
+    session_post(root_url, session_id, "moveto", parameters)
   end
 
   @doc """
@@ -628,7 +628,7 @@ defmodule WebDriver.Protocol do
     Parameters: [button: 1(left) | 2(middle) | 3(right)]
   """
   def mouse_click(root_url, session_id, parameters \\ %{}) do
-    session_post root_url, session_id, "click", parameters
+    session_post(root_url, session_id, "click", parameters)
   end
 
   @doc """
@@ -640,7 +640,7 @@ defmodule WebDriver.Protocol do
     Parameters: [button: 1(left) | 2(middle) | 3(right)]
   """
   def mouse_button_down(root_url, session_id, parameters \\ %{}) do
-    session_post root_url, session_id, "buttondown", parameters
+    session_post(root_url, session_id, "buttondown", parameters)
   end
 
   @doc """
@@ -652,7 +652,7 @@ defmodule WebDriver.Protocol do
     Parameters: [button: 1(left) | 2(middle) | 3(right)]
   """
   def mouse_button_up(root_url, session_id, parameters \\ %{}) do
-    session_post root_url, session_id, "buttonup", parameters
+    session_post(root_url, session_id, "buttonup", parameters)
   end
 
   @doc """
@@ -664,17 +664,17 @@ defmodule WebDriver.Protocol do
     Parameters: [button: 1(left) | 2(middle) | 3(right)]
   """
   def mouse_double_click(root_url, session_id, parameters \\ %{}) do
-    session_post root_url, session_id, "doubleclick", parameters
+    session_post(root_url, session_id, "doubleclick", parameters)
   end
 
- @doc """
+  @doc """
     Finger tap on an element on the screen.
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/touch/click
 
     Parameters: [element: element_id] The element to tap on.
   """
   def touch_click(root_url, session_id, parameters) do
-    session_post root_url, session_id, "touch/click", parameters
+    session_post(root_url, session_id, "touch/click", parameters)
   end
 
   @doc """
@@ -684,7 +684,7 @@ defmodule WebDriver.Protocol do
     Parameters: [x: number, y: number]
   """
   def touch_down(root_url, session_id, parameters) do
-    session_post root_url, session_id, "touch/down", parameters
+    session_post(root_url, session_id, "touch/down", parameters)
   end
 
   @doc """
@@ -694,7 +694,7 @@ defmodule WebDriver.Protocol do
     Parameters: [x: number, y: number]
   """
   def touch_up(root_url, session_id, parameters) do
-    session_post root_url, session_id, "touch/up", parameters
+    session_post(root_url, session_id, "touch/up", parameters)
   end
 
   @doc """
@@ -704,7 +704,7 @@ defmodule WebDriver.Protocol do
     Parameters: [x: number, y: number]
   """
   def touch_move(root_url, session_id, parameters) do
-    session_post root_url, session_id, "touch/move", parameters
+    session_post(root_url, session_id, "touch/move", parameters)
   end
 
   @doc """
@@ -716,7 +716,7 @@ defmodule WebDriver.Protocol do
     Parameters [element: element, x: number, y:number]
   """
   def touch_scroll(root_url, session_id, parameters) do
-    session_post root_url, session_id, "touch/scroll", parameters
+    session_post(root_url, session_id, "touch/scroll", parameters)
   end
 
   @doc """
@@ -726,7 +726,7 @@ defmodule WebDriver.Protocol do
     Parameters: [element: element_id] The element to tap on.
   """
   def touch_double_click(root_url, session_id, parameters) do
-    session_post root_url, session_id, "touch/doubleclick", parameters
+    session_post(root_url, session_id, "touch/doubleclick", parameters)
   end
 
   @doc """
@@ -736,7 +736,7 @@ defmodule WebDriver.Protocol do
     Parameters: [element: element_id] The element to tap on.
   """
   def touch_long_click(root_url, session_id, parameters) do
-    session_post root_url, session_id, "touch/longclick", parameters
+    session_post(root_url, session_id, "touch/longclick", parameters)
   end
 
   @doc """
@@ -748,7 +748,7 @@ defmodule WebDriver.Protocol do
     Parameters: [element: element_id, xoffset: number, yoffset: number, xSpeed: number, ySpeed: number]
   """
   def touch_flick(root_url, session_id, parameters) do
-    session_post root_url, session_id, "touch/flick", parameters
+    session_post(root_url, session_id, "touch/flick", parameters)
   end
 
   @doc """
@@ -756,17 +756,17 @@ defmodule WebDriver.Protocol do
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#GET_/session/:sessionId/location
   """
   def geo_location(root_url, session_id) do
-    session_get root_url, session_id, "location"
+    session_get(root_url, session_id, "location")
   end
 
- @doc """
+  @doc """
     Set the current geo location of the browser.
     https://code.google.com/p/selenium/wiki/JsonWireProtocol#POST_/session/:sessionId/location
 
     Parameters: [lattitude: number, longitude: number, altitude: number]
   """
   def geo_location(root_url, session_id, parameters) do
-    session_post root_url, session_id, "location", parameters
+    session_post(root_url, session_id, "location", parameters)
   end
 
   @doc """
@@ -775,82 +775,101 @@ defmodule WebDriver.Protocol do
   def local_storage do
   end
 
-###########################################################################
-# Private Functions
-###########################################################################
+  ###########################################################################
+  # Private Functions
+  ###########################################################################
 
-  defp url_for root_url, path_elements do
+  defp url_for(root_url, path_elements) do
     path = Enum.join(path_elements, "/")
     "#{root_url}/#{path}"
   end
 
-  defp session_get root_url, session_id, command do
-    get root_url, ["session", session_id, command]
+  defp session_get(root_url, session_id, command) do
+    get(root_url, ["session", session_id, command])
   end
 
-  defp element_get root_url, session_id, element_id, command do
-    get root_url, ["session", session_id, "element", element_id, command]
+  defp element_get(root_url, session_id, element_id, command) do
+    get(root_url, ["session", session_id, "element", element_id, command])
   end
 
-  defp get root_url, path_elements do
-    url = url_for root_url, path_elements
-    request = %Request{method: :GET, url: url, headers: [{"Accept", "application/json;charset=UTF-8"}]}
+  defp get(root_url, path_elements) do
+    url = url_for(root_url, path_elements)
 
-    send_request root_url, request
+    request = %Request{
+      method: :GET,
+      url: url,
+      headers: [{"Accept", "application/json;charset=UTF-8"}]
+    }
+
+    send_request(root_url, request)
   end
 
-  defp session_post root_url, session_id, command, params \\ %{} do
-    post root_url, ["session", session_id, command], params
+  defp session_post(root_url, session_id, command, params \\ %{}) do
+    post(root_url, ["session", session_id, command], params)
   end
 
-  defp element_post root_url, session_id, element_id, command, params \\ %{} do
-    post root_url, ["session", session_id, "element", element_id, command], params
+  defp element_post(root_url, session_id, element_id, command, params \\ %{}) do
+    post(root_url, ["session", session_id, "element", element_id, command], params)
   end
 
-  defp post root_url, path_elements, params do
-    url = url_for root_url, path_elements
-    json =  Jason.encode! params
-    request = %Request{method: :POST, url: url,
-         headers: ["Content-Type": "application/json;charset=UTF-8","Content-Length": byte_size(json)],
-         body: json}
+  defp post(root_url, path_elements, params) do
+    url = url_for(root_url, path_elements)
+    json = Jason.encode!(params)
 
-    send_request root_url, request
+    request = %Request{
+      method: :POST,
+      url: url,
+      headers: [
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": byte_size(json)
+      ],
+      body: json
+    }
+
+    send_request(root_url, request)
   end
 
-  defp session_delete root_url, session_id, command do
-    delete root_url, ["session", session_id, command]
+  defp session_delete(root_url, session_id, command) do
+    delete(root_url, ["session", session_id, command])
   end
 
-  defp delete root_url, path_elements do
-    url = url_for root_url, path_elements
-    request = %Request{method: :DELETE, url: url, headers: [{"Accept", "application/json;charset=UTF-8"}]}
+  defp delete(root_url, path_elements) do
+    url = url_for(root_url, path_elements)
 
-    send_request root_url, request
+    request = %Request{
+      method: :DELETE,
+      url: url,
+      headers: [{"Accept", "application/json;charset=UTF-8"}]
+    }
+
+    send_request(root_url, request)
   end
 
-  defp send_request root_url, request do
-    send_request root_url, request, 0
+  defp send_request(root_url, request) do
+    send_request(root_url, request, 0)
   end
 
-  defp send_request root_url, _request, 100 do
+  defp send_request(root_url, _request, 100) do
     raise "We seem to have lost the connection to the browser at #{root_url}"
   end
 
   # Send the request to the underlying HTTP protocol.
-  defp send_request root_url, request, attempts do
+  defp send_request(root_url, request, attempts) do
     if :application.get_env(:debug_browser) == {:ok, true} do
-      IO.puts "SENDING REQUEST: #{request.method}"
-      IO.puts "URL: #{request.url}"
-      #IO.puts "HEADERS: #{request.headers}"
-      IO.puts "BODY: #{request.body}"
+      IO.puts("SENDING REQUEST: #{request.method}")
+      IO.puts("URL: #{request.url}")
+      # IO.puts "HEADERS: #{request.headers}"
+      IO.puts("BODY: #{request.body}")
     end
 
     try do
       case request.method do
         :GET ->
           HTTPoison.get(request.url, request.headers)
+
         :POST ->
           HTTPoison.post(request.url, request.body, request.headers)
+
         :DELETE ->
           HTTPoison.delete(request.url, request.headers)
       end
@@ -860,65 +879,89 @@ defmodule WebDriver.Protocol do
       [HTTPoison.HTTPError, :econnrefused] ->
         # Try again a bit later cause Firefox is a sluggard.
         :timer.sleep(:random.uniform(1000) + 200)
-        send_request root_url, request, (attempts + 1)
+        send_request(root_url, request, attempts + 1)
     end
   end
 
-  defp handle_response({:ok, %HTTPoison.Response{body: body, status_code: status, headers: _headers}}, _root_url)
-      when status in 200..299 do
-        if :application.get_env(:debug_browser) == {:ok, true} do
-          IO.inspect body
-        end
-        # Chromedriver sends failed commands with a 200 status.
-        response = parse_response_body(body)
-        case response.status do
-          0 -> {:ok, response}
-          _ -> {:failed_command, response.status, response}
-        end
+  defp handle_response(
+         {:ok, %HTTPoison.Response{body: body, status_code: status, headers: _headers}},
+         _root_url
+       )
+       when status in 200..299 do
+    if :application.get_env(:debug_browser) == {:ok, true} do
+      IO.inspect(body)
+    end
+
+    # Chromedriver sends failed commands with a 200 status.
+    response = parse_response_body(body)
+
+    case response.status do
+      0 -> {:ok, response}
+      _ -> {:failed_command, response.status, response}
+    end
   end
 
-  defp handle_response({:ok, %HTTPoison.Response{body: _body, status_code: status, headers: headers}}, root_url)
-      when status in 302..303 do
-        # Cause some use upper case and some dont...
-        url = Keyword.get(headers, :Location, Keyword.get(headers, :location))
-        # Follow redirect
-        request = %Request{method: :GET, url: url, headers: [{"Accept", "application/json;charset=UTF-8"}]}
-        send_request root_url, request
+  defp handle_response(
+         {:ok, %HTTPoison.Response{body: _body, status_code: status, headers: headers}},
+         root_url
+       )
+       when status in 302..303 do
+    # Cause some use upper case and some dont...
+    url = Keyword.get(headers, :Location, Keyword.get(headers, :location))
+    # Follow redirect
+    request = %Request{
+      method: :GET,
+      url: url,
+      headers: [{"Accept", "application/json;charset=UTF-8"}]
+    }
+
+    send_request(root_url, request)
   end
 
-  defp handle_response({:ok, %HTTPoison.Response{body: body, status_code: status, headers: _headers}}, _root_url)
-     when status in 400..499 do
-      {:invalid_request, status, body}
+  defp handle_response(
+         {:ok, %HTTPoison.Response{body: body, status_code: status, headers: _headers}},
+         _root_url
+       )
+       when status in 400..499 do
+    {:invalid_request, status, body}
   end
 
-  defp handle_response({:ok, %HTTPoison.Response{body: body, status_code: status, headers: _headers}}, _root_url)
-    when status in 500..599 do
-     response = parse_response_body(body)
-     {:failed_command, status, response}
+  defp handle_response(
+         {:ok, %HTTPoison.Response{body: body, status_code: status, headers: _headers}},
+         _root_url
+       )
+       when status in 500..599 do
+    response = parse_response_body(body)
+    {:failed_command, status, response}
   end
 
-  defp parse_response_body body do
-    build_response Jason.decode!(body)
+  defp parse_response_body(body) do
+    build_response(Jason.decode!(body))
   end
 
-  defp build_response(%{"sessionId" => session_id, "status" => status, "value" => value })do
-    %Response{ session_id: session_id, status: status, value: value }
+  defp build_response(%{"sessionId" => session_id, "status" => status, "value" => value}) do
+    %Response{session_id: session_id, status: status, value: value}
   end
 
-  defp build_response(%{"name" => _name, "sessionId" => session_id, "status" => status, "value" => value })do
-    %Response{ session_id: session_id, status: status, value: value }
+  defp build_response(%{
+         "name" => _name,
+         "sessionId" => session_id,
+         "status" => status,
+         "value" => value
+       }) do
+    %Response{session_id: session_id, status: status, value: value}
   end
 
   # Append the Request record to a response.
-  defp add_request {:ok, response}, request do
+  defp add_request({:ok, response}, request) do
     {:ok, %{response | request: request}}
   end
 
-  defp add_request {:failed_command, _status, response}, request do
+  defp add_request({:failed_command, _status, response}, request) do
     {WebDriver.Error.summary(response.status), %{response | request: request}}
   end
 
-  defp add_request {:invalid_request, status, response}, request do
+  defp add_request({:invalid_request, status, response}, request) do
     {:invalid_request, status, response, request}
   end
 end

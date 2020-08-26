@@ -1,5 +1,4 @@
 defmodule WebDriver.Firefox.Profile do
-
   @default_profile [
     {"app.update.auto", false},
     {"app.update.enabled", false},
@@ -63,44 +62,44 @@ defmodule WebDriver.Firefox.Profile do
   ]
 
   @webdriver_prefs [
-    native_events:    "webdriver_enable_native_events",
-    untrusted_certs:  "webdriver_accept_untrusted_certs",
+    native_events: "webdriver_enable_native_events",
+    untrusted_certs: "webdriver_accept_untrusted_certs",
     untrusted_issuer: "webdriver_assume_untrusted_issuer",
-    port:             "webdriver_firefox_port",
-    log_file:         "webdriver.log.file" ]
-
+    port: "webdriver_firefox_port",
+    log_file: "webdriver.log.file"
+  ]
 
   def default_profile do
     @default_profile |> Enum.into(Map.new())
   end
 
-  def to_user_js profile do
-    Enum.map(profile, fn({k,v}) -> "user_pref(\"#{k}\", #{quote_string(v)});" end)
+  def to_user_js(profile) do
+    Enum.map(profile, fn {k, v} -> "user_pref(\"#{k}\", #{quote_string(v)});" end)
     |> Enum.join("\n")
   end
 
   def set_port(profile, port) when is_number(port) and port > 0 do
-    Map.put profile, Keyword.get(@webdriver_prefs, :port), port
+    Map.put(profile, Keyword.get(@webdriver_prefs, :port), port)
   end
 
   def set_port(profile, _port) do
     profile
   end
 
-  def write_profile profile, directory do
+  def write_profile(profile, directory) do
     file_path = Path.join(directory, "user.js")
     :ok = File.write(file_path, to_user_js(profile))
     file_path
   end
 
-  def install_extension destination do
-    source = Path.join [__DIR__,"..","..","..","plugins","firefox","webdriver.xpi"]
-    install_extension destination, source
+  def install_extension(destination) do
+    source = Path.join([__DIR__, "..", "..", "..", "plugins", "firefox", "webdriver.xpi"])
+    install_extension(destination, source)
   end
 
-  def install_extension destination, source do
+  def install_extension(destination, source) do
     if !File.regular?(source) do
-      IO.puts """
+      IO.puts("""
       =====================================================
 
       Webdriver plugin for firefox not found at:
@@ -108,31 +107,34 @@ defmodule WebDriver.Firefox.Profile do
       Run `mix webdriver.firefox.install` to install it.
 
       =====================================================
-      """
-      raise RuntimeError, "Webdriver plugin for firefox not found at:\n#{source}.\nRun `mix webdriver.firefox.install` to install it."
+      """)
+
+      raise RuntimeError,
+            "Webdriver plugin for firefox not found at:\n#{source}.\nRun `mix webdriver.firefox.install` to install it."
     end
-    destination = Path.join [destination,"extensions","fxdriver@googlecode.com"]
-    File.mkdir_p destination
-    { :ok, _ } = :zip.unzip String.to_charlist(source), [{:cwd, String.to_charlist(destination)}]
+
+    destination = Path.join([destination, "extensions", "fxdriver@googlecode.com"])
+    File.mkdir_p(destination)
+    {:ok, _} = :zip.unzip(String.to_charlist(source), [{:cwd, String.to_charlist(destination)}])
   end
 
   def make_temp_directory do
-    dir = Path.join(System.tmp_dir, "webdriver-firefox-profile#{random_extension()}")
-    :ok = File.mkdir_p dir
+    dir = Path.join(System.tmp_dir(), "webdriver-firefox-profile#{random_extension()}")
+    :ok = File.mkdir_p(dir)
     dir
   end
 
   # Generate a filename safe random string.
   defp random_extension do
     Regex.replace(~r/[=\/+]/, :base64.encode(:crypto.strong_rand_bytes(8)), "")
-    |> String.downcase
+    |> String.downcase()
   end
 
-  defp quote_string(v) when is_binary v do
-      "\"#{v}\""
+  defp quote_string(v) when is_binary(v) do
+    "\"#{v}\""
   end
 
-  defp quote_string(v) when is_boolean(v) or is_number(v)do
+  defp quote_string(v) when is_boolean(v) or is_number(v) do
     v
   end
 end

@@ -2,7 +2,7 @@ defmodule WebDriver do
   use Application
 
   @moduledoc """
-    Version: #{ WebDriver.Mixfile.project[:version] }
+    Version: #{WebDriver.Mixfile.project()[:version]}
 
     This is the Elixir WebDriver application. It can be used to drive a
     WebDriver enabled browser via Elixir code.
@@ -18,7 +18,8 @@ defmodule WebDriver do
   """
 
   defmodule Config do
-    defstruct  browser: :phantomjs, name: nil, root_url: ""
+    defstruct browser: :phantomjs, name: nil, root_url: ""
+
     @moduledoc """
       Configuration for a WebDriver browser instance.
       Note that this record will have fields added as development of
@@ -37,14 +38,14 @@ defmodule WebDriver do
     :application.start :webdriver
     and should probably not be called directly.
   """
-  def start :normal, config do
-    WebDriver.Supervisor.start_link config
+  def start(:normal, config) do
+    WebDriver.Supervisor.start_link(config)
   end
 
   @doc """
     Callback to clean up on exit. Currently does nothing much.
   """
-  def stop _config do
+  def stop(_config) do
     :ok
   end
 
@@ -73,8 +74,8 @@ defmodule WebDriver do
       {:ok,#PID<0.235.0>}
 
   """
-  def start_browser config do
-    WebDriver.Supervisor.start_browser config
+  def start_browser(config) do
+    WebDriver.Supervisor.start_browser(config)
   end
 
   @doc """
@@ -82,23 +83,23 @@ defmodule WebDriver do
     process if you wish.
     This causes the browser and all associated sessions to be terminated.
   """
-  def stop_browser name do
-    WebDriver.Supervisor.stop_browser name
+  def stop_browser(name) do
+    WebDriver.Supervisor.stop_browser(name)
   end
 
   @doc """
     Stops all browsers and sessions that are running.
   """
   def stop_all_browsers do
-    Enum.each browsers(), fn(browser) -> stop_browser(browser) end
+    Enum.each(browsers(), fn browser -> stop_browser(browser) end)
   end
 
   @doc """
     Returns a list of the process names of all browsers that are running.
   """
   def browsers do
-    children = :supervisor.which_children :webdriver
-    Enum.map children, fn(child) -> get_browser_name(child) end
+    children = :supervisor.which_children(:webdriver)
+    Enum.map(children, fn child -> get_browser_name(child) end)
   end
 
   @doc """
@@ -108,8 +109,8 @@ defmodule WebDriver do
 
     Returns ```{:ok, pid}``` or ```{:error, reason}```
   """
-  def start_session browser, session_name do
-    :gen_server.call browser, {:start_session, session_name}
+  def start_session(browser, session_name) do
+    :gen_server.call(browser, {:start_session, session_name})
   end
 
   @doc """
@@ -117,27 +118,26 @@ defmodule WebDriver do
     This will attempt to terminate the session in the browser then it will
     stop the process running the session in the VM.
   """
-  def stop_session session_name do
-    WebDriver.Session.stop session_name
+  def stop_session(session_name) do
+    WebDriver.Session.stop(session_name)
   end
 
   @doc """
     Returns a list of all the process names of all sessions that are running.
   """
   def sessions do
-    :lists.flatten(Enum.map browsers(), fn(browser) -> sessions(browser) end)
+    :lists.flatten(Enum.map(browsers(), fn browser -> sessions(browser) end))
   end
 
   @doc """
     Returns a list of all the process names of sessions running on the specified browser.
   """
-  def sessions browser do
-    {:ok, s} = :gen_server.call browser, :sessions
+  def sessions(browser) do
+    {:ok, s} = :gen_server.call(browser, :sessions)
     s
   end
 
-  defp get_browser_name {name, _pid, :worker, _mods} do
+  defp get_browser_name({name, _pid, :worker, _mods}) do
     name
   end
-
 end

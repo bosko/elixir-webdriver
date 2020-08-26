@@ -1,16 +1,19 @@
 # HTTP Server for testing WebDriver
 defmodule WebDriver.TestServer do
-  @config [ port: 8888,
-            server_root:   String.to_charlist(Path.absname("../", __DIR__)),
-            document_root: String.to_charlist(Path.absname("../pages", __DIR__)),
-            server_name:   'webdriver_test',
-            directory_index: ['index.html']]
+  @config [
+    port: 8888,
+    server_root: String.to_charlist(Path.absname("../", __DIR__)),
+    document_root: String.to_charlist(Path.absname("../pages", __DIR__)),
+    server_name: 'webdriver_test',
+    directory_index: ['index.html']
+  ]
 
   def start do
-    :inets.start
+    :inets.start()
+
     case :inets.start(:httpd, @config) do
-     {:ok, pid} -> pid
-     {:error, {:already_started, pid}} -> pid
+      {:ok, pid} -> pid
+      {:error, {:already_started, pid}} -> pid
     end
   end
 
@@ -19,6 +22,6 @@ defmodule WebDriver.TestServer do
   end
 
   def stop() do
-    :ok = :inets.stop(:httpd, {{127,0,0,1}, 8888})
+    :ok = :inets.stop(:httpd, {{127, 0, 0, 1}, 8888})
   end
 end
