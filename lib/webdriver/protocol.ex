@@ -935,6 +935,10 @@ defmodule WebDriver.Protocol do
     {:failed_command, status, response}
   end
 
+  def handle_response({:error, error}) do
+    {:failed_command, :unknown, error}
+  end
+
   defp parse_response_body(body) do
     build_response(Jason.decode!(body))
   end
