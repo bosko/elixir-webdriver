@@ -436,19 +436,19 @@ defmodule WebDriverProtocolTest do
 
   def post(_url, options) do
     body = Keyword.get(options, :body)
-    %HTTPoison.Response{ body: "{\"sessionId\": \"1234\", \"status\": 0, \"value\": #{JASON.encode! body}}",
+    %HTTPoison.Response{ body: "{\"sessionId\": \"1234\", \"status\": 0, \"value\": #{Jason.encode! body}}",
                        status_code: 201, headers: []}
   end
 
   # Mocks a response to a GET request. Just returns an HTTPoison Response
   def get(_url, _options) do
-    %HTTPoison.Response{ body: "{\"sessionId\": \"1234\", \"status\": 0, \"value\": #{JASON.encode!(%{})}}",
+    %HTTPoison.Response{ body: "{\"sessionId\": \"1234\", \"status\": 0, \"value\": #{Jason.encode!(%{})}}",
                        status_code: 200, headers: [] }
   end
 
   # Mocks a response to a DELETE request. Just returns an HTTPoison Response
   def delete(_url, _options) do
-    %HTTPoison.Response{ body: "{\"sessionId\": \"1234\", \"status\": 0, \"value\": #{JASON.encode!(%{})}}",
+    %HTTPoison.Response{ body: "{\"sessionId\": \"1234\", \"status\": 0, \"value\": #{Jason.encode!(%{})}}",
                        status_code: 204, headers: [] }
   end
 
@@ -459,7 +459,7 @@ defmodule WebDriverProtocolTest do
   defp assert_post path, body do
     # TODO: Check if this is needed for Jason
     # Jazz shuffles map keys around.
-    b = JASON.decode!(body) |> JASON.encode!
+    b = Jason.decode!(body) |> Jason.encode!
     assert called HTTPoison.post("http://127.0.0.1:8080#{path}", :_)
   end
 
